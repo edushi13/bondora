@@ -12,4 +12,4 @@ A. Server
 B. MVCClient
 1. Clone the MVCClient folder
 2. Open MVCClient folder in VS and build
-3. Run the MVCClient from the VS.
+3. Run the MVCClient from the VS by using IIS Express.
