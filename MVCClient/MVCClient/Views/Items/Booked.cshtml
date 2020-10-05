@@ -1,0 +1,47 @@
+﻿@model IEnumerable<MVCClient.Models.OrderItem>
+
+@{
+    ViewData["Title"] = "Items";
+}
+
+<h1>Added to order</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayText("Title")
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Days)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ItemName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Days)
+                </td>
+                <td>
+                    @Html.ActionLink("Remove", "Remove", new { id = item.ItemId })
+                </td>
+
+            </tr>
+
+        }
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+<p>
+    <a asp-action="Invoice">Get Invoice</a>
+</p>
