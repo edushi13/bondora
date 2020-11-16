@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using WebApi.BL;
 using WebApi.Data;
 
 namespace WebApi
@@ -21,6 +22,8 @@ namespace WebApi
         {
             services.AddControllers();
             services.AddScoped<IItemsRepository, EquipmentRepository>();
+            services.AddSingleton(new CalculatorFactory());
+            services.AddScoped<IInvoiceGenerator, InvoiceGenerator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

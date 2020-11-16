@@ -17,7 +17,7 @@ namespace MVCClient.Services
 
         public ServerApiProxy(IConfiguration config)
         {
-            serverApiUrl = config.GetValue<string>("ServerApiUrl");        
+            serverApiUrl = config.GetValue<string>("ServerApiUrl");
         }
 
         public Invoice GenerateInvoiceAsync(Order order)
@@ -32,25 +32,14 @@ namespace MVCClient.Services
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
             var url = serverApiUrl + "/order";
-   
-
-            //var response = await client.PostAsync(url, data);
 
             // List data response.
             var response = client.PostAsync(url, data).Result;
             string result = response.Content.ReadAsStringAsync().Result;
-            
-                // Parse the response body.
-                //var dataObjects = response.Content.ReadAsStringAsync();//.Content.ReadAsAsync<IEnumerable<Item>>().Result;  //Make sure to add a reference to System.Net.Http.Formatting.dll
-                var invoice = JsonConvert.DeserializeObject<Invoice>(result);
-                
-                return invoice;
-            //}
-            //else
-            //{
-            //    //Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
-            //    return new Item[0];
-            //}
+
+            var invoice = JsonConvert.DeserializeObject<Invoice>(result);
+
+            return invoice;
         }
 
         public Item[] GetItems()
@@ -77,7 +66,6 @@ namespace MVCClient.Services
                 }
                 else
                 {
-                    //Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
                     return new Item[0];
                 }
             }

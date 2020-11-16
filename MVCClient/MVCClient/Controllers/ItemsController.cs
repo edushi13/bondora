@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVCClient.Data;
 using MVCClient.Models;
+using MVCClient.Formatters;
 using MVCClient.Services;
 using Newtonsoft.Json;
 using System.IO;
@@ -12,11 +13,13 @@ namespace MVCClient.Controllers
     {
         private IServerProxy _serverProxy;
         private IBookedRepository _booked;
+        private IInvoiceFormatter _formatter;
 
-        public ItemsController(IServerProxy proxy, IBookedRepository booked)
+        public ItemsController(IServerProxy proxy, IBookedRepository booked, IInvoiceFormatter invoiceFormatter)
         {
             _serverProxy = proxy;
             _booked = booked;
+            _formatter = invoiceFormatter;
         }
 
         public IActionResult Index()
@@ -56,48 +59,21 @@ namespace MVCClient.Controllers
         [HttpGet]
         public IActionResult Invoice()
         {
-            //_booked.RemoveFromOrder(id);
-            //return View("Booked", _booked.GetBooked());
             Order order = new Order() { CustomerId = 1, Items = _booked.GetBooked().ToList() };
             var invoice = _serverProxy.GenerateInvoiceAsync(order);
             
-            string downloadFileName = "error.txt";
+            string downloadFileName = "invoice.txt";
 
             var stream = new MemoryStream();
             var writer = new StreamWriter(stream);
 
-            string text = FormatInvoiceString(invoice);
-            //writer.Write(JsonConvert.SerializeObject(invoice));
+            string text = _formatter.FormatInvoice(invoice);
+
             writer.Write(text);
             writer.Flush();
             stream.Position = 0;
 
             return File(stream, "text/plain", downloadFileName);
-        }
-
-        private string FormatInvoiceString(Invoice invoice)
-        {
-            string result = $"{invoice.Title}";
-            result += "\n\n";
-
-            result += "-----------------------------------------\n";
-            result += "Item                            |  Amount\n";
-            result += "-----------------------------------------\n";
-            foreach (var item in invoice.Items)
-            {
-                result += $"{item.ItemName}";
-                var spaces = 32 - item.ItemName.Length;
-                for(int i= 0; i < spaces; i++)
-                {
-                    result += " ";
-                }
-                result += "|  ";
-                result += $"{item.Amount}\n";
-            }
-            result += "\n";
-            result += $"Total\t\t\t\t   {invoice.Total}\n";
-            result += $"Points\t\t\t\t   {invoice.Points}\n";
-            return result;
         }
     }
 }
